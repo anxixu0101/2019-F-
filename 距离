@@ -1,0 +1,10 @@
+function  juli=sum_distance(A,B)
+x1=A(:,1);
+y1=A(:,2);
+z1=A(:,3);
+x2=B(:,1);
+y2=B(:,2);
+z2=B(:,3);
+juli=sqrt((x2-x1)^2+(y2-y1)^2+(z2-z1)^2);
+
+end
