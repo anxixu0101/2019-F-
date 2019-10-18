@@ -1,0 +1,65 @@
+%% 数学建模飞行器轨迹规划
+%% 作者： 安希旭
+%% 2019 9 19
+
+%% 引入数据
+[num_1]=xlsread('D:\math\2.xlsx');
+num_1(:,[1])=[];
+num_1([1],:)=[];
+%% 得到一个只有坐标的数据集
+zoom_data=num_1;
+zoom_data(:,[4])=[];
+zoom_data(:,[4])=[];
+zoom_data=floor(zoom_data);
+
+%% 参数定义
+x1=20;  %%垂直误差不大于x1个单位
+x2=10;  %%水平误差不大于x2个单位可以进行垂直误差校正
+y1=15;  %%垂直误差不大于y1
+y2=20;  %%水平误差不大于y2时才能进行水平误差校正
+alpha=0.001; %% 误差增加单位
+theta=20;    %%到达B点时 垂直误差和水平误差均小于theta
+
+zoom=sort(zoom_data);
+%% 定义A的值
+%A=[0,50000,5000];
+%A=[1882,52353,5488];
+
+%A=[2959 ,54815 , 4809];
+A=[9523,55061,6392];
+while ( A(1,1)<zoom(326,1) )
+  
+
+
+
+%% 删除飞行垂直和水平误差会超过theta的校正点,第一次选点
+for p2=1:1:length(zoom_data)
+      error_1=error_solve_2(A,zoom_data(p2,:));
+      fuyang_theta(p2,:)=fuyang(A,zoom_data(p2,:));
+       if zoom_data(p2,1)>A(1,1) ...
+           && sum_distance(A,zoom_data(p2,:))*alpha*sin(fuyang_theta(p2,1))<theta ...
+           && sum_distance(A,zoom_data(p2,:))*alpha*cos(fuyang_theta(p2,1))<theta ...
+           && error_1(1,1)<20 ...
+           && error_1(1,2)<20 
+             data_1(p2,:)=zoom_data(p2,:);   
+       end
+    
+end
+            data_1(all(data_1==0,2),:) = [];
+            c=sort(data_1);
+            
+%% 计算距离
+for p3=1:1:length(data_1)
+   distance_1(p3,1)=sum_distance(data_1(p3,:),A);
+end
+   distance_2=sort(distance_1);
+   
+for p4=1:1:length(distance_1)
+    if distance_1(p4,1)==distance_2(1,1)
+        data_1(p4,:)
+        A=data_1(p4,:);
+    end
+end
+
+end
+
