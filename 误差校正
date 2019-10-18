@@ -1,0 +1,47 @@
+function error=error_solve_1(A,B)
+    
+    x1=25;  %%垂直误差不大于x1个单位
+    x2=15;  %%水平误差不大于x2个单位可以进行垂直误差校正
+
+    y1=20;  %%垂直误差不大于y1
+    y2=25;  %%水平误差不大于y2时才能进行水平误差校正
+    theta=30;    %%到达B点时 垂直误差和水平误差均小于theta
+    alpha=0.001;
+    %% 误差的初始值
+    error(1,:)=[0,0];
+    %% 引入数据
+   
+    [num_1]=xlsread('D:\math\1.xlsx');
+    num_1(:,[1])=[];
+    num_1([1],:)=[];
+    %% 得到一个只有坐标的数据集
+    zoom_data=num_1;
+    zoom_data(:,[4])=[];
+    zoom_data_xiabiao=zoom_data;
+    zoom_data(:,[4])=[];
+    
+    error_shuiping=sum_distance(zoom_data(A,:),zoom_data(B,:))*alpha*cos(fuyang(zoom_data(A,:),zoom_data(B,:)));
+    error_chuizhi=sum_distance(zoom_data(A,:),zoom_data(B,:))*alpha*sin(fuyang(zoom_data(A,:),zoom_data(B,:)));
+    
+    %% 依次算出距离,并进行误差校正
+    %% 先设置水平误差校正约束  0 是水平误差校正
+    if error_chuizhi <=y1...
+        & error_shuiping<=y2...
+        & num_1(B,4)==0
+            error_shuiping=0;          
+    else
+        error_shuiping=error_shuiping;      
+    end
+    
+    %% 设置垂直误差校正约束  0 是水平误差校正
+    if error_chuizhi<=x1...
+        & error_shuiping<=x2...
+        & num_1(B,4)==1
+            error_chuizhi=0;   
+    else
+        error_chuizhi= error_chuizhi;
+    end
+   error=[error_shuiping,error_chuizhi];%% 水平误差+垂直误差
+
+
+end
